@@ -2,6 +2,7 @@ extends CharacterBody3D
 
 #***** NODES *****#
 @onready var camera_3d = $Camera3D
+@onready var origCamPos : Vector3 = camera_3d.position
 #***** CAMERA *****#
 var mouse_sens := 0.15
 #***** MOVEMENT *****#
@@ -9,6 +10,10 @@ var direction
 var speed := 5
 var jump := 30.0
 const  GRAVITY = 5
+
+var _delta := 0.0
+var camBobSpeed := 10
+var camBobUpDown := 1
 
 
 func _ready():
@@ -20,7 +25,10 @@ func _input(event):
 		rotate_y(deg_to_rad(-event.relative.x * mouse_sens))
 		camera_3d.rotate_x(deg_to_rad(-event.relative.y * mouse_sens))
 		camera_3d.rotation.x = clamp(camera_3d.rotation.x, deg_to_rad(-89), deg_to_rad(89))
-		
+
+func _process(delta):
+	process_camBob(delta)
+
 func _physics_process(delta):
 	process_movement(delta)
 	
@@ -41,3 +49,16 @@ func process_movement(delta):
 		velocity.y -= GRAVITY
 
 	move_and_slide()
+
+func process_camBob(delta):
+	_delta += delta
+	var cam_bob #speed
+	var objCam  #how much up or down the camera moves
+	if direction != Vector3.ZERO: #The player is moving
+		cam_bob = floor(abs(direction.z) + abs(direction.x)) * _delta * camBobSpeed
+		objCam = origCamPos + Vector3.UP * sin(cam_bob) * camBobUpDown
+	else: #player is not moving
+		cam_bob = floor(abs(1) + abs(1)) * _delta * .6
+		objCam = origCamPos + Vector3.UP * sin(cam_bob) * camBobUpDown * .1
+	
+	camera_3d.position = camera_3d.position.lerp(objCam, delta)
