@@ -10,10 +10,12 @@ extends CharacterBody3D
 var mouse_sens := 0.15
 #***** MOVEMENT *****#
 var direction
+var isRunning := false
 var speed := 5
 var jump := 30.0
 const  GRAVITY = 5
-
+var distanceFootstep := 0.0
+var playFootstep := 3 #lower if we want the sounds to play faster
 var _delta := 0.0
 var camBobSpeed := 10
 var camBobUpDown := 1
@@ -28,24 +30,30 @@ func _input(event):
 		rotate_y(deg_to_rad(-event.relative.x * mouse_sens))
 		camera_3d.rotate_x(deg_to_rad(-event.relative.y * mouse_sens))
 		camera_3d.rotation.x = clamp(camera_3d.rotation.x, deg_to_rad(-89), deg_to_rad(89))
+	if Input.is_action_just_pressed("run"):
+		isRunning = true
+	if Input.is_action_just_released("run"):
+		isRunning = false
 
 func _process(delta):
 	process_camBob(delta)
-	
+
 	if floorCast.is_colliding():
 		var walkingTerrain = floorCast.get_collider().get_parent()
 		if walkingTerrain != null:
 			var terrainGroup = walkingTerrain.get_groups()[0]
-			print(terrainGroup)
+			#print(terrainGroup)
 			processGroundSounds(terrainGroup)
 	#print(floorCast.get_collider().get_parent())
-
-var distanceFootstep := 0.0
-var playFootstep := 3 #higher if we want the sounds to play slower
 
 func processGroundSounds(group: String):
 	#Read state machine in the case that you also want the player to play sounds faster or slower
 	#depending on if the player is running or crouching
+	
+	if isRunning:
+		playFootstep = 3
+	else:
+		playFootstep = 6
 	
 	if playFootstep != 100 and (int(velocity.x) != 0) || (int(velocity.z) != 0):
 		distanceFootstep += 0.1
@@ -70,8 +78,9 @@ func process_movement(delta):
 	direction.z = -Input.get_action_strength("ui_up") + Input.get_action_strength("ui_down")
 	direction = Vector3(direction.x, 0, direction.z).rotated(Vector3.UP, h_rot).normalized()
 
-	velocity.x = direction.x * speed
-	velocity.z = direction.z * speed
+	var actualSpeed = speed if !isRunning else speed*2
+	velocity.x = direction.x * actualSpeed
+	velocity.z = direction.z * actualSpeed
 
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y += jump
