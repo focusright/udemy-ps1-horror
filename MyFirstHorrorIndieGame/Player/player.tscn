@@ -19,3 +19,8 @@ shape = SubResource("CapsuleShape3D_0g7la")
 cast_shadow = 0
 mesh = SubResource("CapsuleMesh_fnslf")
 skeleton = NodePath("../Camera3D")
+
+[node name="FloorDetectRayCast" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.729365, 0)
+
+[node name="PlayerFootstepSound" type="AudioStreamPlayer" parent="."]

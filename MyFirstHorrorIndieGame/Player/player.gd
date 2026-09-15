@@ -3,6 +3,9 @@ extends CharacterBody3D
 #***** NODES *****#
 @onready var camera_3d = $Camera3D
 @onready var origCamPos : Vector3 = camera_3d.position
+@onready var floorCast = $FloorDetectRayCast
+@onready var player_footstep_sound = $PlayerFootstepSound
+
 #***** CAMERA *****#
 var mouse_sens := 0.15
 #***** MOVEMENT *****#
@@ -28,6 +31,33 @@ func _input(event):
 
 func _process(delta):
 	process_camBob(delta)
+	
+	if floorCast.is_colliding():
+		var walkingTerrain = floorCast.get_collider().get_parent()
+		if walkingTerrain != null:
+			var terrainGroup = walkingTerrain.get_groups()[0]
+			print(terrainGroup)
+			processGroundSounds(terrainGroup)
+	#print(floorCast.get_collider().get_parent())
+
+var distanceFootstep := 0.0
+var playFootstep := 3 #higher if we want the sounds to play slower
+
+func processGroundSounds(group: String):
+	#Read state machine in the case that you also want the player to play sounds faster or slower
+	#depending on if the player is running or crouching
+	
+	if playFootstep != 100 and (int(velocity.x) != 0) || (int(velocity.z) != 0):
+		distanceFootstep += 0.1
+	if distanceFootstep > playFootstep and is_on_floor():
+		match group:
+			"WoodTerrain":
+				player_footstep_sound.stream = load("res://Player/SoundsFootsteps/wood/1.ogg")
+			"Grass":
+				player_footstep_sound.stream = load("res://Player/SoundsFootsteps/grass/1.ogg")
+		player_footstep_sound.pitch_scale = randf_range(0.8, 1.2)
+		player_footstep_sound.play()
+		distanceFootstep = 0.0
 
 func _physics_process(delta):
 	process_movement(delta)

@@ -32,13 +32,22 @@ environment = SubResource("Environment_7t3d8")
 transform = Transform3D(-0.411514, -0.661109, 0.627369, 0, 0.688355, 0.725374, -0.911403, 0.298502, -0.283268, 0, 0, 0)
 shadow_enabled = true
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." groups=["WoodTerrain"]]
 transform = Transform3D(10, 0, 0, 0, 0.1, 0, 0, 0, 10, 0, 0, 0)
 mesh = SubResource("BoxMesh_odht2")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_eelvu")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." groups=["Grass"]]
+transform = Transform3D(10, 0, 0, 0, 0.1, 0, 0, 0, 10, 0, 0, -10.0936)
+mesh = SubResource("BoxMesh_odht2")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D2/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_eelvu")
 
 [node name="Player" parent="." instance=ExtResource("2_dt74t")]
