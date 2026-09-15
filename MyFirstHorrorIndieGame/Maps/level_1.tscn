@@ -1,7 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://q4yjauhqrne6"]
+[gd_scene load_steps=10 format=3 uid="uid://q4yjauhqrne6"]
 
 [ext_resource type="Script" path="res://Maps/level_1.gd" id="1_ur1bi"]
 [ext_resource type="PackedScene" uid="uid://daohtp8ftkmm7" path="res://Player/player.tscn" id="2_dt74t"]
+[ext_resource type="PackedScene" uid="uid://cgcjwt8k7wtxn" path="res://Interactables/interact_generic.tscn" id="3_jbume"]
+[ext_resource type="PackedScene" uid="uid://bea2ebt1s5aik" path="res://Interactables/cube_interactable.tscn" id="4_3328v"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_e4oui"]
 sky_top_color = Color(0.352941, 0.466667, 0.521569, 1)
@@ -51,3 +53,9 @@ mesh = SubResource("BoxMesh_odht2")
 shape = SubResource("ConcavePolygonShape3D_eelvu")
 
 [node name="Player" parent="." instance=ExtResource("2_dt74t")]
+
+[node name="interact_generic" parent="." instance=ExtResource("3_jbume")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -2)
+
+[node name="CubeInteractable" parent="." instance=ExtResource("4_3328v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, -2)

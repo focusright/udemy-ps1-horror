@@ -15,6 +15,10 @@ shape = SubResource("CapsuleShape3D_0g7la")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 
+[node name="InteractRayCast" type="RayCast3D" parent="Camera3D"]
+target_position = Vector3(0, 0, -5)
+collide_with_areas = true
+
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 cast_shadow = 0
 mesh = SubResource("CapsuleMesh_fnslf")

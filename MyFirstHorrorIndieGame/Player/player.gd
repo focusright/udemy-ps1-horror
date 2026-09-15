@@ -5,6 +5,7 @@ extends CharacterBody3D
 @onready var origCamPos : Vector3 = camera_3d.position
 @onready var floorCast = $FloorDetectRayCast
 @onready var player_footstep_sound = $PlayerFootstepSound
+@onready var interact_cast = $Camera3D/InteractRayCast
 
 #***** CAMERA *****#
 var mouse_sens := 0.15
@@ -34,6 +35,11 @@ func _input(event):
 		isRunning = true
 	if Input.is_action_just_released("run"):
 		isRunning = false
+		
+	if Input.is_action_just_pressed("interact"):
+		var interacted = interact_cast.get_collider()
+		if interacted != null and interacted.is_in_group("Interactable") and interacted.has_method("action_use"):
+			interacted.action_use()
 
 func _process(delta):
 	process_camBob(delta)
@@ -93,7 +99,10 @@ func process_camBob(delta):
 	_delta += delta
 	var cam_bob #speed
 	var objCam  #how much up or down the camera moves
-	if direction != Vector3.ZERO: #The player is moving
+	if isRunning:
+		cam_bob = floor(abs(direction.z) + abs(direction.x)) * _delta * camBobSpeed * 1.5
+		objCam = origCamPos + Vector3.UP * sin(cam_bob) * camBobUpDown		
+	elif direction != Vector3.ZERO: #The player is moving
 		cam_bob = floor(abs(direction.z) + abs(direction.x)) * _delta * camBobSpeed
 		objCam = origCamPos + Vector3.UP * sin(cam_bob) * camBobUpDown
 	else: #player is not moving
